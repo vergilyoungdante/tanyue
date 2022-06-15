@@ -15,6 +15,7 @@ class TanyueApplicationTests {
     void contextLoads() {
     }
 
+    //测试数据库连接是否正常
     @Test
     public void databaseTest() {
         userRepository.save(new User("aaa","bbb",1));
