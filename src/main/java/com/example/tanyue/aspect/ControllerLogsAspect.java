@@ -17,36 +17,37 @@ public class ControllerLogsAspect {
     private final static Logger logger = LoggerFactory.getLogger(ControllerLogsAspect.class);
 
     @Pointcut("execution(* com.example.tanyue.controller..*(..))")
-    public void controllerLog(){}
+    public void controllerLog() {
+    }
 
     @Before("controllerLog()")
-    public void doBefore(JoinPoint joinPoint){
-        try{
+    public void doBefore(JoinPoint joinPoint) {
+        try {
             ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-            if(attributes==null||joinPoint==null){
+            if (attributes == null || joinPoint == null) {
                 return;
             }
             HttpServletRequest request = attributes.getRequest();
 
 
-            StringBuffer methodBuf = new StringBuffer();
+            StringBuilder methodBuf = new StringBuilder();
             methodBuf.append(joinPoint.getSignature().getDeclaringType()).append(".").append(joinPoint.getSignature().getName());
             logger.info("REQUEST: url=>{}, httpMethod=>{}, ip=>{}, classMethod=>{}, httpParams=>{}",
-                    request.getRequestURI(),request.getMethod(),request.getRemoteAddr(),new String(methodBuf),
+                    request.getRequestURI(), request.getMethod(), request.getRemoteAddr(), new String(methodBuf),
                     buildHttpParams(request));
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private String buildHttpParams(HttpServletRequest request){
-        StringBuffer paramBuf = new StringBuffer();
+    private String buildHttpParams(HttpServletRequest request) {
+        StringBuilder paramBuf = new StringBuilder();
         paramBuf.append("{");
-        Enumeration em = request.getParameterNames();
-        while(em.hasMoreElements()){
-            String name = (String) em.nextElement();
+        Enumeration<String> em = request.getParameterNames();
+        while (em.hasMoreElements()) {
+            String name = em.nextElement();
             String[] value = request.getParameterValues(name);
-            paramBuf.append(name).append(":").append(value.length==1?value[0]: Arrays.toString(value)).append(" ");
+            paramBuf.append(name).append(":").append(value.length == 1 ? value[0] : Arrays.toString(value)).append(" ");
         }
         paramBuf.append("}");
         return new String(paramBuf);
